@@ -1,15 +1,14 @@
-import * as moment from "moment";
 
-export class ExampleClass {
-
-    public test(): void {
-        console.log("Test: " + moment().format("YYYY-DD-MM"));
-    }
-
-    public returnsTrue(): boolean {
-        return true;
-    }
+//
+// Configures the CSV resolver.
+//
+export interface ICsvResolverConfig {
 
 }
 
-//TODO: Code for your reusable code module goes here.
+//
+// Creates the CSV resolver with a particular configuration.
+//
+export async function createResolver(config: ICsvResolverConfig): Promise<any> {
+    //todo:
+}
