@@ -1,10 +1,29 @@
+import { createResolver, ICsvResolverConfig } from "..";
 
-describe("main test suite", () => {
+describe("miniql csv resolver", () => {
 
-    it("should be true", ()  => {
+    it("can create resolver for single entity", async ()  => {
 
-        expect(true).toBeTruthy();
-
+        const config: ICsvResolverConfig = {
+            movie: {
+            },
+        };
+        const resolver = await createResolver(config);
+        expect(resolver.movie).toBeInstanceOf(Function);
     });
 
+    it("can create resolver for multiple entity", async ()  => {
+
+        const config: ICsvResolverConfig = {
+            movie: {
+            },
+            actor: {
+
+            },
+        };
+        const resolver = await createResolver(config);
+        expect(resolver.movie).toBeInstanceOf(Function);
+        expect(resolver.actor).toBeInstanceOf(Function);
+
+    });
 });
