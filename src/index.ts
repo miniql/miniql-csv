@@ -5,7 +5,7 @@ export interface IRelatedEntityConfig {
     //
     // Specifies the column in the CSV that relates this entity to the other entity.
     //
-    foreignKey: string;
+    // foreignKey: string;
 }
 
 //
@@ -23,12 +23,12 @@ export interface IEntityType {
     //
     // Specifies the column in the CSV file that is the primary identifying key for each entity.
     //
-    primaryKey: string;
+    // primaryKey: string;
 
     //
     // The path to the CSV file to load for this entity type.
     //
-    csvFilePath?: string; //TODO: error if neither csvFilePath or csvData is included.
+    csvFilePath: string; //TODO: error if neither csvFilePath or csvData is included. TODO SHOULD BE OPTIONAL.
 
     // 
     // The CSV data for this entity type.
@@ -38,27 +38,34 @@ export interface IEntityType {
     //
     // Specifies other entities that are related to this one.
     //
-    related: IRelatedEntities;
+    related?: IRelatedEntities;
 }
 
 //
 // Configures the CSV resolver.
 //
 export interface ICsvResolverConfig {
-
+    [entityType: string]: IEntityType;
 }
 
 //
-// Creates the CSV resolver with a particular configuration.
+// Defines a function for loading CSV data.
 //
-export async function createResolver(config: ICsvResolverConfig): Promise<any> {
+export type LoadCsvDataFn = (filePath: string) => Promise<any[]>;
+
+//
+// Creates the CSV resolver with a particular configuration.
+// TODO: loadCsvData should be optional!
+//
+export async function createResolver(config: ICsvResolverConfig, loadCsvData: LoadCsvDataFn): Promise<any> {
     const resolver: any = { 
         query: {
         },
     };
     for (const entityName of Object.keys(config)) {
+        const entityType = config[entityName];
         resolver.query[entityName] = async () => {
-            //TODO:
+            return await loadCsvData(entityType.csvFilePath);
         };
     }
 
