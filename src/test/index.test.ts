@@ -9,7 +9,7 @@ describe("miniql csv resolver", () => {
             },
         };
         const resolver = await createResolver(config);
-        expect(resolver.movie).toBeInstanceOf(Function);
+        expect(resolver.query.movie).toBeInstanceOf(Function);
     });
 
     it("can create resolver for multiple entity", async ()  => {
@@ -22,8 +22,8 @@ describe("miniql csv resolver", () => {
             },
         };
         const resolver = await createResolver(config);
-        expect(resolver.movie).toBeInstanceOf(Function);
-        expect(resolver.actor).toBeInstanceOf(Function);
+        expect(resolver.query.movie).toBeInstanceOf(Function);
+        expect(resolver.query.actor).toBeInstanceOf(Function);
 
     });
 });
