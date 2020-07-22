@@ -21,11 +21,6 @@ export interface IRelatedEntities {
 export interface IEntityType {
 
     //
-    // The name of this entity.
-    //
-    name: string;
-
-    //
     // Specifies the column in the CSV file that is the primary identifying key for each entity.
     //
     primaryKey: string;
@@ -57,8 +52,12 @@ export interface ICsvResolverConfig {
 // Creates the CSV resolver with a particular configuration.
 //
 export async function createResolver(config: ICsvResolverConfig): Promise<any> {
-    return {
-        movie: () => {},
-        actor: () => {},
-    };
+    const resolver: any = {};
+    for (const entityName of Object.keys(config)) {
+        resolver[entityName] = async () => {
+            //TODO:
+        };
+    }
+
+    return resolver;
 }
