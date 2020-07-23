@@ -1,3 +1,5 @@
+import { readCsv } from "datakit";
+
 //
 // Configures a related entity.
 //
@@ -55,18 +57,24 @@ export type LoadCsvDataFn = (filePath: string) => Promise<any[]>;
 
 //
 // Creates the CSV resolver with a particular configuration.
-// TODO: loadCsvData should be optional!
 //
-export async function createResolver(config: ICsvResolverConfig, loadCsvData: LoadCsvDataFn): Promise<any> {
+export async function createResolver(config: ICsvResolverConfig, loadCsvData?: LoadCsvDataFn): Promise<any> {
     const resolver: any = { 
         query: {
         },
     };
 
+    if (loadCsvData === undefined) {
+        // If no method if provided to load a CSV file, default to loading from local file system.
+        loadCsvData = async (csvFilePath: string) => {
+            return await readCsv(csvFilePath, {});
+        };
+    }
+
     for (const entityName of Object.keys(config)) {
         const entityType = config[entityName];
         resolver.query[entityName] = async (query: any) => {
-            const entities = await loadCsvData(entityType.csvFilePath); //TODO: CACHE IT!
+            const entities = await loadCsvData!(entityType.csvFilePath); //TODO: CACHE IT!
             if (query.id !== undefined) {
                 // Single entity query.
                 const primaryKey = entityType.primaryKey; //TODO: Error check this is defined!
