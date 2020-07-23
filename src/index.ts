@@ -5,7 +5,7 @@ export interface IRelatedEntityConfig {
     //
     // Specifies the column in the CSV that relates this entity to the other entity.
     //
-    // foreignKey: string;
+    // foreignKey: string; TODO
 }
 
 //
@@ -23,7 +23,7 @@ export interface IEntityType {
     //
     // Specifies the column in the CSV file that is the primary identifying key for each entity.
     //
-    // primaryKey: string;
+    primaryKey: string;
 
     //
     // The path to the CSV file to load for this entity type.
@@ -62,10 +62,28 @@ export async function createResolver(config: ICsvResolverConfig, loadCsvData: Lo
         query: {
         },
     };
+
     for (const entityName of Object.keys(config)) {
         const entityType = config[entityName];
-        resolver.query[entityName] = async () => {
-            return await loadCsvData(entityType.csvFilePath);
+        resolver.query[entityName] = async (query: any) => {
+            const entities = await loadCsvData(entityType.csvFilePath); //TODO: CACHE IT!
+            if (query.id !== undefined) {
+                // Single entity query.
+                const primaryKey = entityType.primaryKey; //TODO: Error check this is defined!
+                const filteredEntities = entities.filter(entity => entity[primaryKey] === query.id);
+                if (filteredEntities.length > 0) {
+                    // At least one entity was found.
+                    return filteredEntities[0];
+                }
+                else {
+                    // No entity was found.
+                    return undefined;
+                }
+            }
+            else {
+                // Multiple entity query.
+                return entities;
+            }
         };
     }
 

@@ -1,12 +1,12 @@
 import { createResolver, ICsvResolverConfig } from "..";
-import { loadPartialConfig } from "@babel/core";
 
-describe("miniql csv resolver", () => {
+describe("query entities", () => {
 
-    it("can create resolver for single entity", async ()  => {
+    it("can create resolver to retreive multiple entities", async ()  => {
 
         const config: ICsvResolverConfig = {
             movie: {
+                primaryKey: "name",
                 csvFilePath: "movies.csv",
             },
         };
@@ -37,13 +37,15 @@ describe("miniql csv resolver", () => {
         ]);
     });
 
-    it("can create resolver for multiple entity", async ()  => {
+    it("can create resolver for multiple entity types", async ()  => {
 
         const config: ICsvResolverConfig = {
             movie: {
+                primaryKey: "name",
                 csvFilePath: "movies.csv",
             },
             actor: {
+                primaryKey: "name",
                 csvFilePath: "actors.csv",
             },
         };
