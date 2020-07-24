@@ -118,12 +118,12 @@ export async function createResolver(config: ICsvResolverConfig, loadCsvData?: L
                         const nestedEntity = nested[nestedEntityTypeName];
                         const entityTypeName = nestedEntity.from || nestedEntityTypeName; //todo: error check
                         const nestedEntityType = config[entityTypeName]; //todo: error check this exists!
-                        const parentKey = nestedEntity.parentKey; //tood: error check entity type object exists! todo: error check one of these exists.
+                        const parentKey = nestedEntity.parentKey; //todo: error check entity type object exists! todo: error check one of these exists.
                         const foreignKey = nestedEntity.foreignKey;
                         const nestedEntities = await loadCsvData!(nestedEntityType.csvFilePath); //TODO: CACHE IT!
                         if (parentKey !== undefined) {
                             const id = parent[parentKey];
-                            return nestedEntities.filter(nestedEntity => nestedEntity[nestedEntityType.primaryKey] === id);
+                            return nestedEntities.filter(nestedEntity => nestedEntity[nestedEntityType.primaryKey] === id)[0]; //TODO: what if it doesn't exist?
                         }
                         else if (foreignKey !== undefined) {
                             const parentEntityId = parent[entityType.primaryKey]; //todo: check that it exists.
