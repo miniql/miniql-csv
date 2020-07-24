@@ -60,7 +60,7 @@ export type LoadCsvDataFn = (filePath: string) => Promise<any[]>;
 //
 export async function createResolver(config: ICsvResolverConfig, loadCsvData?: LoadCsvDataFn): Promise<any> {
     const resolver: any = { 
-        query: {
+        get: {
         },
     };
 
@@ -73,12 +73,12 @@ export async function createResolver(config: ICsvResolverConfig, loadCsvData?: L
 
     for (const entityTypeName of Object.keys(config)) {
         const entityType = config[entityTypeName];
-        resolver.query[entityTypeName] = async (query: any, context: any) => {
+        resolver.get[entityTypeName] = async (args: any, context: any) => {
             const entities = await loadCsvData!(entityType.csvFilePath); //TODO: CACHE IT!
-            if (query.id !== undefined) {
+            if (args.id !== undefined) {
                 // Single entity query.
                 const primaryKey = entityType.primaryKey; //TODO: Error check this is defined!
-                const filteredEntities = entities.filter(entity => entity[primaryKey] === query.id);
+                const filteredEntities = entities.filter(entity => entity[primaryKey] === args.id);
                 if (filteredEntities.length > 0) {
                     // At least one entity was found.
                     return filteredEntities[0];
@@ -97,7 +97,7 @@ export async function createResolver(config: ICsvResolverConfig, loadCsvData?: L
         if (entityType.related) {
             for (const nestedEntityTypeName of Object.keys(entityType.related)) {
                 const mapFnName = `${entityTypeName}=>${nestedEntityTypeName}`;
-                resolver.query[mapFnName] = async (query: any, context: any) => {
+                resolver.get[mapFnName] = async (query: any, context: any) => {
                     const parentEntityId = query.entity[entityType.primaryKey];
                     const nestedEntityType = config[nestedEntityTypeName]; //todo: error check this exists!
                     const foreignKey = entityType.related![nestedEntityTypeName].foreignKey;

@@ -55,7 +55,7 @@ describe("query nested entity", () => {
             },
         };
 
-        const mapFn = resolver.query["movie=>director"];
+        const mapFn = resolver.get["movie=>director"];
         const result = await mapFn(
             {
                 entity: { 
