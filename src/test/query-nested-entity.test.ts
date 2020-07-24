@@ -8,7 +8,7 @@ describe("query nested entity", () => {
             movie: {
                 primaryKey: "name",
                 csvFilePath: "movies.csv",
-                related: {
+                nested: {
                     director: {
                         foreignKey: "movie",
                     },
@@ -48,23 +48,16 @@ describe("query nested entity", () => {
 
         const resolver = await createResolver(config, loadTestData);
         
-        const query = { 
-            id: "The Bourne Identity",
-            lookup: {
-                director: true,
-            },
+        const parentEntity = { 
+            name: "The Bourne Identity",
         };
 
-        const mapFn = resolver.get["movie=>director"];
-        const result = await mapFn(
+        const result = await resolver.get.movie.nested.director.invoke(parentEntity, {}, {});
+        expect(result).toEqual([ 
             {
-                entity: { 
-                    name: "The Bourne Identity" 
-                },
-            }, 
-            {}
-        );
-        expect(result).toEqual([ "Doug Liman", ]);
+                name: "Doug Liman",
+                movie: "The Bourne Identity",
+            },
+        ]);
     });
-
 });

@@ -3,11 +3,21 @@ import { readCsv } from "datakit";
 //
 // Configures a related entity.
 //
-export interface IRelatedEntityConfig {
+export interface IRelatedEntityConfig { //TODO: error check that one of these is present.
     //
-    // Specifies the column in the CSV that relates this entity to the other entity.
+    // The type of entity, if different from the nested entity key.
     //
-    foreignKey: string;
+    from?: string;
+
+    //
+    // Specifies the column in the parent entity that relates it to the primaryKey in the nested entity.
+    //
+    parentKey?: string;
+
+    //
+    // Specifies the column in the child entity that relates it to the primaryKey in the parent entity.
+    //
+    foreignKey?: string;
 }
 
 //
@@ -40,7 +50,7 @@ export interface IEntityType {
     //
     // Specifies other entities that are related to this one.
     //
-    related?: IRelatedEntities;
+    nested?: IRelatedEntities;
 }
 
 //
@@ -73,41 +83,61 @@ export async function createResolver(config: ICsvResolverConfig, loadCsvData?: L
 
     for (const entityTypeName of Object.keys(config)) {
         const entityType = config[entityTypeName];
-        resolver.get[entityTypeName] = async (args: any, context: any) => {
-            const entities = await loadCsvData!(entityType.csvFilePath); //TODO: CACHE IT!
-            if (args.id !== undefined) {
-                // Single entity query.
+        const entityResolver: any = { //TODO: type this properly.
+            invoke: async (args: any, context: any) => {
+                const entities = await loadCsvData!(entityType.csvFilePath); //TODO: CACHE IT!
                 const primaryKey = entityType.primaryKey; //TODO: Error check this is defined!
-                const filteredEntities = entities.filter(entity => entity[primaryKey] === args.id);
-                if (filteredEntities.length > 0) {
-                    // At least one entity was found.
-                    return filteredEntities[0];
+                const entityId = args[primaryKey];
+                if (entityId !== undefined) {
+                    // Single entity query.
+                    const filteredEntities = entities.filter(entity => entity[primaryKey] === entityId);
+                    if (filteredEntities.length > 0) {
+                        // At least one entity was found.
+                        return filteredEntities[0];
+                    }
+                    else {
+                        // No entity was found.
+                        return undefined;
+                    }
                 }
                 else {
-                    // No entity was found.
-                    return undefined;
+                    // Multiple entity query.
+                    return entities;
                 }
-            }
-            else {
-                // Multiple entity query.
-                return entities;
-            }
+            },
         };
 
-        if (entityType.related) {
-            for (const nestedEntityTypeName of Object.keys(entityType.related)) {
-                const mapFnName = `${entityTypeName}=>${nestedEntityTypeName}`;
-                resolver.get[mapFnName] = async (query: any, context: any) => {
-                    const parentEntityId = query.entity[entityType.primaryKey];
-                    const nestedEntityType = config[nestedEntityTypeName]; //todo: error check this exists!
-                    const foreignKey = entityType.related![nestedEntityTypeName].foreignKey;
-                    const nestedEntities = await loadCsvData!(nestedEntityType.csvFilePath); //TODO: CACHE IT!
-                    return nestedEntities
-                        .filter(nestedEntity => nestedEntity[foreignKey] === parentEntityId)
-                        .map(nestedEntity => nestedEntity[nestedEntityType.primaryKey]);
-                };
+        if (entityType.nested) {
+            entityResolver.nested = {};
+
+            const nested = entityType.nested;
+
+            for (const nestedEntityTypeName of Object.keys(entityType.nested)) {
+                entityResolver.nested[nestedEntityTypeName] = {
+                    invoke: async (parent: any, args: any, context: any) => {
+                        const nestedEntity = nested[nestedEntityTypeName];
+                        const entityTypeName = nestedEntity.from || nestedEntityTypeName; //todo: error check
+                        const nestedEntityType = config[entityTypeName]; //todo: error check this exists!
+                        const parentKey = nestedEntity.parentKey; //tood: error check entity type object exists! todo: error check one of these exists.
+                        const foreignKey = nestedEntity.foreignKey;
+                        const nestedEntities = await loadCsvData!(nestedEntityType.csvFilePath); //TODO: CACHE IT!
+                        if (parentKey !== undefined) {
+                            const id = parent[parentKey];
+                            return nestedEntities.filter(nestedEntity => nestedEntity[nestedEntityType.primaryKey] === id);
+                        }
+                        else if (foreignKey !== undefined) {
+                            const parentEntityId = parent[entityType.primaryKey]; //todo: check that it exists.
+                            return nestedEntities.filter(nestedEntity => nestedEntity[foreignKey] === parentEntityId);
+                        }
+                        else {
+                            //todo: error.
+                        }
+                    }
+                }
             }
         }
+
+        resolver.get[entityTypeName] = entityResolver;
     }
 
     return resolver;

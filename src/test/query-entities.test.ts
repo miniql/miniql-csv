@@ -24,7 +24,7 @@ describe("query entities", () => {
 
         const resolver = await createResolver(config, async (csvFilePath: string) => testCsvData);
         
-        const result = await resolver.get.movie({}, {});
+        const result = await resolver.get.movie.invoke({}, {});
         expect(result).toEqual([
             {
                 name: "The Bourne Identity",
@@ -84,7 +84,7 @@ describe("query entities", () => {
 
         const resolver = await createResolver(config, loadTestData);
 
-        const movies = await resolver.get.movie({}, {});
+        const movies = await resolver.get.movie.invoke({}, {});
         expect(movies).toEqual([
             {
                 name: "The Bourne Identity",
@@ -96,7 +96,7 @@ describe("query entities", () => {
             },
         ]);
 
-        const actors = await resolver.get.actor({}, {});
+        const actors = await resolver.get.actor.invoke({}, {});
         expect(actors).toEqual([
             {
                 name: "Matt Daemon",
