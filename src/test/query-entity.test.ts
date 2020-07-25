@@ -25,7 +25,7 @@ describe("query entity", () => {
         const resolver = await createQueryResolver(config, async (csvFilePath: string) => testCsvData);
         
         const args = { 
-            name: "The Bourne Identity" 
+            name: "The Bourne Identity",
         };
         const result = await resolver.get.movie.invoke(args, {});
         expect(result).toEqual({

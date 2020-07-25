@@ -115,11 +115,11 @@ export async function createQueryResolver(config: ICsvResolverConfig, loadCsvDat
             for (const nestedEntityTypeName of Object.keys(entityType.nested)) {
                 entityResolver.nested[nestedEntityTypeName] = {
                     invoke: async (parent: any, args: any, context: any) => {
-                        const nestedEntity = nested[nestedEntityTypeName];
-                        const entityTypeName = nestedEntity.from || nestedEntityTypeName;
-                        const nestedEntityType = config[entityTypeName]; //todo: error check this exists!
-                        const parentKey = nestedEntity.parentKey; //todo: error check entity type object exists! todo: error check one of these exists.
-                        const foreignKey = nestedEntity.foreignKey;
+                        const nestedEntityConfig = nested[nestedEntityTypeName];
+                        const nestedEntityConfigName = nestedEntityConfig.from || nestedEntityTypeName;
+                        const nestedEntityType = config[nestedEntityConfigName]; //todo: error check this exists!
+                        const parentKey = nestedEntityConfig.parentKey; //todo: error check entity type object exists! todo: error check one of these exists.
+                        const foreignKey = nestedEntityConfig.foreignKey;
                         const nestedEntities = await loadCsvData!(nestedEntityType.csvFilePath); //TODO: CACHE IT!
                         if (parentKey !== undefined) {
                             const id = parent[parentKey];
@@ -132,7 +132,7 @@ export async function createQueryResolver(config: ICsvResolverConfig, loadCsvDat
                         else {
                             //todo: error.
                         }
-                    }
+                    },
                 }
             }
         }
