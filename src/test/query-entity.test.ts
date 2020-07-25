@@ -1,4 +1,4 @@
-import { createResolver, ICsvResolverConfig } from "..";
+import { createQueryResolver, ICsvResolverConfig } from "..";
 
 describe("query entity", () => {
 
@@ -22,7 +22,7 @@ describe("query entity", () => {
             },
         ];
 
-        const resolver = await createResolver(config, async (csvFilePath: string) => testCsvData);
+        const resolver = await createQueryResolver(config, async (csvFilePath: string) => testCsvData);
         
         const args = { 
             name: "The Bourne Identity" 

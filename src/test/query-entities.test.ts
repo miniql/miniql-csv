@@ -1,4 +1,4 @@
-import { createResolver, ICsvResolverConfig } from "..";
+import { createQueryResolver, ICsvResolverConfig } from "..";
 
 describe("query entities", () => {
 
@@ -22,7 +22,7 @@ describe("query entities", () => {
             },
         ];
 
-        const resolver = await createResolver(config, async (csvFilePath: string) => testCsvData);
+        const resolver = await createQueryResolver(config, async (csvFilePath: string) => testCsvData);
         
         const result = await resolver.get.movie.invoke({}, {});
         expect(result).toEqual([
@@ -82,7 +82,7 @@ describe("query entities", () => {
             }
         }
 
-        const resolver = await createResolver(config, loadTestData);
+        const resolver = await createQueryResolver(config, loadTestData);
 
         const movies = await resolver.get.movie.invoke({}, {});
         expect(movies).toEqual([

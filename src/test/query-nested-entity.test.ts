@@ -1,4 +1,4 @@
-import { createResolver, ICsvResolverConfig } from "..";
+import { createQueryResolver, ICsvResolverConfig } from "..";
 
 describe("query nested entity", () => {
 
@@ -36,7 +36,7 @@ describe("query nested entity", () => {
             }
         }
 
-        const resolver = await createResolver(config, loadTestData);
+        const resolver = await createQueryResolver(config, loadTestData);
         
         const parentEntity = {
             name: "The Bourne Identity",
@@ -95,7 +95,7 @@ describe("query nested entity", () => {
             }
         }
 
-        const resolver = await createResolver(config, loadTestData);
+        const resolver = await createQueryResolver(config, loadTestData);
         
         const parentEntity = { 
             name: "The Bourne Identity",

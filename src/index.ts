@@ -68,7 +68,7 @@ export type LoadCsvDataFn = (filePath: string) => Promise<any[]>;
 //
 // Creates the CSV resolver with a particular configuration.
 //
-export async function createResolver(config: ICsvResolverConfig, loadCsvData?: LoadCsvDataFn): Promise<any> {
+export async function createQueryResolver(config: ICsvResolverConfig, loadCsvData?: LoadCsvDataFn): Promise<any> {
     const resolver: any = { 
         get: {
         },
@@ -116,7 +116,7 @@ export async function createResolver(config: ICsvResolverConfig, loadCsvData?: L
                 entityResolver.nested[nestedEntityTypeName] = {
                     invoke: async (parent: any, args: any, context: any) => {
                         const nestedEntity = nested[nestedEntityTypeName];
-                        const entityTypeName = nestedEntity.from || nestedEntityTypeName; //todo: error check
+                        const entityTypeName = nestedEntity.from || nestedEntityTypeName;
                         const nestedEntityType = config[entityTypeName]; //todo: error check this exists!
                         const parentKey = nestedEntity.parentKey; //todo: error check entity type object exists! todo: error check one of these exists.
                         const foreignKey = nestedEntity.foreignKey;
