@@ -71,7 +71,13 @@ Now you can make queries against the dataset, for example:
     const query = {
         get: {
             species: { // Query for "species" entity.
+            
                 // No arguments gets all entities.
+
+                resolve: {
+                    homeworld: { // Resolves the homeworld of each species as a nested lookup.
+                    },
+                }
             },
         },
     };
