@@ -1,6 +1,6 @@
 {
     "name": "@miniql/csv",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "description": "A MiniQL query resolver that loads data from CSV files.",
     "main": "build/index.js",
     "types": "build/index.d.ts",
@@ -27,7 +27,13 @@
         "type": "git",
         "url": "git+https://miniql@github.com/miniql/miniql-csv.git"
     },
-    "keywords": [],
+    "keywords": [
+        "csv",
+        "comma separated values",
+        "data",
+        "query",
+        "query language"
+    ],
     "author": "ashley@codecapers.com.au",
     "license": "MIT",
     "bugs": {
