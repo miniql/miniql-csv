@@ -1,8 +1,7 @@
 import { readCsv } from "datakit";
-import { createQueryResolver as createLazyResolver, IQueryResolverConfig, ILazyDataLoader } from "@miniql/lazy";
 import { IQueryResolver } from "@miniql/core-types";
-export { IQueryResolverConfig, IRelatedEntityConfig, IRelatedEntities, IEntityType, IEntityTypes,  } from "@miniql/lazy";
-
+import { createQueryResolver as createLazyResolver, IQueryResolverConfig, ILazyDataLoader } from "@miniql/lazy";
+export { IQueryResolverConfig, IRelatedEntityConfig, IRelatedEntities, IEntityType, IEntityTypes } from "@miniql/lazy";
 
 //
 // Sets CSV file path for each entity type.
