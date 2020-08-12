@@ -1,22 +1,22 @@
-import { createQueryResolver, ICsvResolverConfig } from "..";
+import { createQueryResolver, IQueryResolverConfig, ICsvFileConfig } from "..";
 
 describe("query nested entity", () => {
 
     it("can create function to retreive a nested entity", async ()  => {
 
-        const config: ICsvResolverConfig = {
-            movie: {
-                primaryKey: "name",
-                csvFilePath: "movies.csv",
-                nested: {
-                    director: {
-                        parentKey: "directorId",
+        const config: IQueryResolverConfig = {
+            entities: {
+                movie: {
+                    primaryKey: "name",
+                    nested: {
+                        director: {
+                            parentKey: "directorId",
+                        },
                     },
                 },
-            },
-            director: {
-                primaryKey: "id",
-                csvFilePath: "directors.csv",
+                director: {
+                    primaryKey: "id",
+                },
             },
         };
 
@@ -27,6 +27,11 @@ describe("query nested entity", () => {
             },
         ];
 
+        const csvFiles: ICsvFileConfig = {
+            movie: "movies.csv",
+            director: "directors.csv",
+        };
+
         async function loadTestData(csvFilePath: string): Promise<any[]> {
             if (csvFilePath === "directors.csv") {
                 return directorsTestData;
@@ -36,7 +41,7 @@ describe("query nested entity", () => {
             }
         }
 
-        const resolver = await createQueryResolver(config, loadTestData);
+        const resolver = await createQueryResolver(config, csvFiles, loadTestData);
         
         const parentEntity = {
             name: "The Bourne Identity",
@@ -44,28 +49,30 @@ describe("query nested entity", () => {
             directorId: "1234",
         };
 
-        const result = await resolver.get.movie.nested.director.invoke(parentEntity, {}, {});
+        const result = await resolver.get.movie.nested!.director.invoke(parentEntity, {}, {});
         expect(result).toEqual({
             id: "1234",
             name: "Doug Liman",
         });
     });
 
-    it("can create function to retreive a nested entities", async ()  => {
+    it("can create function to retreive multiple nested entities", async ()  => {
 
-        const config: ICsvResolverConfig = {
-            movie: {
-                primaryKey: "name",
-                csvFilePath: "movies.csv",
-                nested: {
-                    director: {
-                        foreignKey: "movie",
+        const config: IQueryResolverConfig = {
+            entities: {
+                movie: {
+                    primaryKey: "name",
+                    nested: {
+                        director: {
+                            multiple: true,
+                            parentKey: "name", //TODO: I kind of feel like this should be implied from the primaryKey.
+                            foreignKey: "movie",
+                        },
                     },
                 },
-            },
-            director: {
-                primaryKey: "name",
-                csvFilePath: "directors.csv",
+                director: {
+                    primaryKey: "name",
+                },
             },
         };
 
@@ -83,6 +90,11 @@ describe("query nested entity", () => {
             },
         ];
 
+        const csvFiles: ICsvFileConfig = {
+            movie: "movies.csv",
+            director: "directors.csv",
+        };
+
         async function loadTestData(csvFilePath: string): Promise<any[]> {
             if (csvFilePath === "movies.csv") {
                 return moviesTestData;
@@ -95,13 +107,13 @@ describe("query nested entity", () => {
             }
         }
 
-        const resolver = await createQueryResolver(config, loadTestData);
+        const resolver = await createQueryResolver(config, csvFiles, loadTestData);
         
         const parentEntity = { 
             name: "The Bourne Identity",
         };
 
-        const result = await resolver.get.movie.nested.director.invoke(parentEntity, {}, {});
+        const result = await resolver.get.movie.nested!.director.invoke(parentEntity, {}, {});
         expect(result).toEqual([ 
             {
                 name: "Doug Liman",

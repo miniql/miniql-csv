@@ -1,13 +1,14 @@
-import { createQueryResolver, ICsvResolverConfig } from "..";
+import { createQueryResolver, IQueryResolverConfig, ICsvFileConfig } from "..";
 
 describe("query entity", () => {
 
     it("can create resolver to retreive single entity", async ()  => {
 
-        const config: ICsvResolverConfig = {
-            movie: {
-                primaryKey: "name",
-                csvFilePath: "movies.csv",
+        const config: IQueryResolverConfig = {
+            entities: {
+                movie: {
+                    primaryKey: "name",
+                },
             },
         };
 
@@ -22,7 +23,11 @@ describe("query entity", () => {
             },
         ];
 
-        const resolver = await createQueryResolver(config, async (csvFilePath: string) => testCsvData);
+        const csvFiles: ICsvFileConfig = {
+            movie: "movies.csv",
+        };
+
+        const resolver = await createQueryResolver(config, csvFiles, async (csvFilePath: string) => testCsvData);
         
         const args = { 
             name: "The Bourne Identity",

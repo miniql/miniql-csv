@@ -1,6 +1,6 @@
 {
     "name": "@miniql/csv",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "description": "A MiniQL query resolver that loads data from CSV files.",
     "main": "build/index.js",
     "types": "build/index.d.ts",
@@ -41,6 +41,8 @@
     },
     "homepage": "https://github.com/miniql/miniql-csv#readme",
     "dependencies": {
+        "@miniql/lazy": "0.0.2",
+        "@miniql/core-types": "0.0.1",
         "datakit": "^1.0.3"
     },
     "devDependencies": {

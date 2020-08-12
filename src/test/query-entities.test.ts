@@ -1,13 +1,14 @@
-import { createQueryResolver, ICsvResolverConfig } from "..";
+import { createQueryResolver, IQueryResolverConfig, ICsvFileConfig } from "..";
 
 describe("query entities", () => {
 
     it("can create resolver to retreive multiple entities", async ()  => {
 
-        const config: ICsvResolverConfig = {
-            movie: {
-                primaryKey: "name",
-                csvFilePath: "movies.csv",
+        const config: IQueryResolverConfig = {
+            entities: {
+                movie: {
+                    primaryKey: "name",
+                },
             },
         };
 
@@ -22,7 +23,11 @@ describe("query entities", () => {
             },
         ];
 
-        const resolver = await createQueryResolver(config, async (csvFilePath: string) => testCsvData);
+        const csvFiles: ICsvFileConfig = {
+            movie: "movies.csv",
+        };
+
+        const resolver = await createQueryResolver(config, csvFiles, async (csvFilePath: string) => testCsvData);
         
         const result = await resolver.get.movie.invoke({}, {});
         expect(result).toEqual([
@@ -39,15 +44,20 @@ describe("query entities", () => {
 
     it("can create resolver for multiple entity types", async ()  => {
 
-        const config: ICsvResolverConfig = {
-            movie: {
-                primaryKey: "name",
-                csvFilePath: "movies.csv",
+        const config: IQueryResolverConfig = {
+            entities: {
+                movie: {
+                    primaryKey: "name",
+                },
+                actor: {
+                    primaryKey: "name",
+                },
             },
-            actor: {
-                primaryKey: "name",
-                csvFilePath: "actors.csv",
-            },
+        };
+
+        const csvFiles: ICsvFileConfig = {
+            movie: "movies.csv",
+            actor: "actors.csv",
         };
 
         const movieTestData = [
@@ -82,7 +92,7 @@ describe("query entities", () => {
             }
         }
 
-        const resolver = await createQueryResolver(config, loadTestData);
+        const resolver = await createQueryResolver(config, csvFiles, loadTestData);
 
         const movies = await resolver.get.movie.invoke({}, {});
         expect(movies).toEqual([
