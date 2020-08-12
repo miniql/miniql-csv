@@ -32,7 +32,7 @@ export function createQueryResolver(config: IQueryResolverConfig, csvFiles: ICsv
         // Loads a single entity.
         //
         async loadSingleEntity(entityTypeName: string, primaryKey: string, entityId: string): Promise<any> {
-            const entities = await loadCsvData!(csvFiles[entityTypeName]); //TODO: CACHE IT!
+            const entities = await loadCsvData!(csvFiles[entityTypeName]);
             const filteredEntities = entities.filter(entity => entity[primaryKey] === entityId);
             if (filteredEntities.length > 0) {
                 // At least one entity was found.
@@ -48,7 +48,7 @@ export function createQueryResolver(config: IQueryResolverConfig, csvFiles: ICsv
         // Load the set of entities.
         //
         async loadEntities(entityTypeName: string): Promise<any[]> {
-            return await loadCsvData!(csvFiles[entityTypeName]); //TODO: CACHE IT!
+            return await loadCsvData!(csvFiles[entityTypeName]);
         },
     };
     return createLazyResolver(config, dataLoader);
